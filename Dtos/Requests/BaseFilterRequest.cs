@@ -1,4 +1,4 @@
-namespace OnlineShop.Dtos.RequestDtos;
+namespace OnlineShop.Dtos.Requests;
 public class BaseFilterRequest
 {
     public string? Search { get; set; }

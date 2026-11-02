@@ -2,16 +2,10 @@ using Hangfire;
 using OnlineShop.Installer;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 builder.Services.InstallServicesInAssembly(builder.Configuration);
 
-var app = builder.Build();
 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
 app.UseSwagger();
@@ -20,8 +14,6 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     DashboardTitle = "Hirealdoor Dashboard",
 });
-
-
 
 app.UseHttpsRedirection();
 

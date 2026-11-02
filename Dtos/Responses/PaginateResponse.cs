@@ -1,6 +1,6 @@
-namespace OnlineShop.Dtos.ResponseDtos;
+namespace OnlineShop.Dtos.Responses;
 
-public class PaginateResponseDto<T>
+public class PaginateResponse<T>
 {
     public int? Page { get; set; } = 1;
     public int? Pager { get; set; } = 10;

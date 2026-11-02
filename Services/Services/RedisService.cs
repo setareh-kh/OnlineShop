@@ -12,25 +12,26 @@ public class RedisService(string connectionString,string prefix) : IRedisService
     };
 
     private readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(connectionString);
+    private string BuildKey(string key)=> $"{prefix}:{key}";
 
     public async Task SetValueAsync(string key, dynamic value, TimeSpan? expiration = null)
     {
         var db = _redis.GetDatabase();
         var serializedValue = JsonSerializer.Serialize(value, _options);
-        await db.StringSetAsync($"{prefix}:{key}", serializedValue, expiration);
+        await db.StringSetAsync(BuildKey(key), serializedValue, expiration);
     }
 
     public void SetValue(string key, dynamic value, TimeSpan? expiration = null)
     {
         var db = _redis.GetDatabase();
         var serializedValue = JsonSerializer.Serialize(value, _options);
-        db.StringSet($"{prefix}:{key}", serializedValue, expiration);
+        db.StringSet(BuildKey(key), serializedValue, expiration);
     }
 
     public async Task<T?> GetValueAsync<T>(string key)
     {
         var db = _redis.GetDatabase();
-        var serializedValue = await db.StringGetAsync($"{prefix}:{key}");
+        var serializedValue = await db.StringGetAsync(BuildKey(key));
         return string.IsNullOrEmpty(serializedValue)
             ? default
             : JsonSerializer.Deserialize<T>(serializedValue.ToString(), _options);
@@ -39,7 +40,7 @@ public class RedisService(string connectionString,string prefix) : IRedisService
     public T? GetValue<T>(string key)
     {
         var db = _redis.GetDatabase();
-        var serializedValue = db.StringGet($"{prefix}:{key}");
+        var serializedValue = db.StringGet(BuildKey(key));
         return string.IsNullOrEmpty(serializedValue)
             ? default
             : JsonSerializer.Deserialize<T>(serializedValue.ToString(), _options);
@@ -48,25 +49,25 @@ public class RedisService(string connectionString,string prefix) : IRedisService
     public bool KeyExists(string key)
     {
         var db = _redis.GetDatabase();
-        return db.KeyExists($"{prefix}:{key}");
+        return db.KeyExists(BuildKey(key));
     }
 
     public async Task<bool> KeyExistsAsync(string key)
     {
         var db = _redis.GetDatabase();
-        return await db.KeyExistsAsync($"{prefix}:{key}");
+        return await db.KeyExistsAsync(BuildKey(key));
     }
 
     public async Task<bool> DeleteKeyAsync(string key)
     {
         var db = _redis.GetDatabase();
-        return await db.KeyDeleteAsync($"{prefix}:{key}");
+        return await db.KeyDeleteAsync(BuildKey(key));
     }
 
     public bool DeleteKey(string key)
     {
         var db = _redis.GetDatabase();
-        return db.KeyDelete($"{prefix}:{key}");
+        return db.KeyDelete(BuildKey(key));
     }
 
     public async Task DeleteKeysAsync(string[] keys)
@@ -91,7 +92,7 @@ public class RedisService(string connectionString,string prefix) : IRedisService
     {
         var db = _redis.GetDatabase();
         var server = _redis.GetServer(db.Multiplexer.GetEndPoints()[0]);
-        var keys = server.Keys(-1, $"{prefix}:{pattern}");
+        var keys = server.Keys(-1,BuildKey(pattern));
 
         var results = new Dictionary<string, string>();
 
