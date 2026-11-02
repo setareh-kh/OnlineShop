@@ -109,9 +109,15 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
         if (!string.IsNullOrWhiteSpace(filter.OrderBy))
         {
-            var items = filter.OrderBy.Split(":");
-            var orderBy = items[0];
-            var desc = items[1];
+            string orderBy, desc = "";
+            //name:desc
+            if (filter.OrderBy.Contains(':'))
+            {
+                var items = filter.OrderBy.Split(":");
+                orderBy = items[0];
+                desc = items[1];
+            }
+            else orderBy = filter.OrderBy.Trim();
 
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderFunc =
                 desc == "desc"

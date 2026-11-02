@@ -63,6 +63,19 @@ public class CategoryService(ICategoryRepository categoryRepository, IRedisServi
         categoryRepository.Delete(category);
         await categoryRepository.SaveChangesAsync();
         return true;
-        
     }
+    public async Task<PaginateResponse<Category>> Filter(BaseFilterRequest filter)
+    {
+        var res = await categoryRepository.Filter(filter);
+        return new PaginateResponse<Category>()
+        {
+            Page = res.Page,
+            Pager = res.Pager,
+            Total = res.Total,
+            Pages = res.Pages,
+            Items = res.Items?.ToList()
+        };
+    }
+
+
 }

@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Dtos.Requests;
-using OnlineShop.Dtos.Responses;
-using OnlineShop.Models;
 using OnlineShop.Services;
 using OnlineShop.Setting;
 
@@ -45,4 +43,11 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
         var result = await categoryService.DeleteAsync(id);
         return result ? NoContent() : NotFound();
     }
+    [HttpPost("Search")]
+    public async Task<IActionResult> Search([FromQuery] BaseFilterRequest filterRequest)
+    {
+        var result = await categoryService.Filter(filterRequest);
+        return Ok(result);
+    }
+
 }

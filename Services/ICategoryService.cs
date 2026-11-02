@@ -12,4 +12,5 @@ public interface ICategoryService:IBaseService<Category>
     Task<StandardResponse> AddAsync(AddCategoryRequest addDto);
     Task<bool> UpdateAsync(int id, UpdateCategoryRequest updateCategory);
     Task<bool> DeleteAsync(int id);
+    Task<PaginateResponse<Category>> Filter(BaseFilterRequest filter);
 }
