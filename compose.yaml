@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: "Hagighat01"
-      MYSQL_DATABASE: onlineshop
+      MYSQL_DATABASE: OnlineShop
     ports:
       - "127.0.0.1:3309:3306"
     volumes:
