@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: onlineshop-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "Hagighat01"
+      MYSQL_DATABASE: onlineshop
+    ports:
+      - "127.0.0.1:3309:3306"
+    volumes:
+      - onlineshop-mysql-data:/var/lib/mysql
+     # بررسی آماده بودن MySQL
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    
+  redis:
+    image: redis:7
+    container_name: onlineshop-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - onlineshop-redis-data:/data
+     # بررسی آماده بودن Redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  onlineshop-mysql-data:
+  onlineshop-redis-data:
