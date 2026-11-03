@@ -1,5 +1,6 @@
 using AutoMapper;
 using OnlineShop.Dtos.Requests;
+using OnlineShop.Dtos.Responses;
 using OnlineShop.Models;
 
 namespace OnlineShop
@@ -9,9 +10,15 @@ namespace OnlineShop
         public MapperProfile()
         {
             //mapping requestDtos to models
-            CreateMap<AddCategoryRequest, Category>();
-            CreateMap<UpdateCategoryRequest,Category>().ForAllMembers(options =>options.Condition((src, dest, srcMember) =>
-                    srcMember != null));
+            CreateMap<AddCategoryRequest, Category>().ForMember(dest => dest.Id, opt => opt.Ignore());
+
+            CreateMap<UpdateCategoryRequest, Category>()
+                    .ForMember(dest => dest.Id, opt => opt.Ignore())
+                    .ForAllMembers(options => options.Condition((src, dest, srcMember) =>
+                        srcMember != null));
+
+            //
+            CreateMap<Category, CategoryResponse>();
 
         }
     }
