@@ -19,17 +19,25 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
-        
+
 
         //install IService and Service as services
         services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IImageService, ImageService>();
-       
-    
-        var redisConnectionString= configuration.GetValue<string>("RedisConnectionStrings:Redis");
-        var perfixCach= configuration.GetValue<string>("RedisConnectionStrings:RedisPrefix");
-        services.AddSingleton<IRedisService>(_ =>new RedisService(redisConnectionString!,perfixCach!));
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        //For JWT
+        var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+        services.AddSingleton(appSettings!);
+        services.AddHttpContextAccessor();
+
+
+        //For RedisCache
+        var redisConnectionString = configuration.GetValue<string>("RedisConnectionStrings:Redis");
+        var perfixCach = configuration.GetValue<string>("RedisConnectionStrings:RedisPrefix");
+        services.AddSingleton<IRedisService>(_ => new RedisService(redisConnectionString!, perfixCach!));
     }
 }

@@ -1,10 +1,6 @@
 using System.Linq.Expressions;
-using OnlineShop.Dtos.Responses;
 using OnlineShop.Models;
-
-
 namespace OnlineShop.Services;
-
 public interface IBaseService<TEntity> where TEntity : class, ISqlEntity
 {
     Task<IEnumerable<TEntity>?> GetAll();

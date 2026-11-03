@@ -2,25 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineShop.Validators
 {
-    public class AllowedExtnsions : ValidationAttribute
+    public class AllowedExtnsions(string[] extensions,  bool isList = false) : ValidationAttribute
     {
-        private readonly string[] _extensions;
-        private readonly bool _isList;
-
-        public AllowedExtnsions(string[] extensions, bool isList = false)
-        {
-            _extensions = extensions;
-            _isList = isList;
-        }
-
-        protected override ValidationResult? IsValid(
-            object? value,
-            ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value is null)
                 return ValidationResult.Success;
 
-            if (_isList)
+            if (isList)
             {
                 if (value is not IEnumerable<IFormFile> files)
                     return new ValidationResult("Invalid file collection.");
@@ -31,7 +20,7 @@ namespace OnlineShop.Validators
                 {
                     var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-                    if (!_extensions.Contains(ext))
+                    if (!extensions.Contains(ext))
                         return new ValidationResult($"File {i} format is not valid.");
 
                     i++;
@@ -45,7 +34,7 @@ namespace OnlineShop.Validators
 
             var extension = Path.GetExtension(singleFile.FileName).ToLowerInvariant();
 
-            return _extensions.Contains(extension)
+            return extensions.Contains(extension)
                 ? ValidationResult.Success
                 : new ValidationResult("File format is not valid.");
         }

@@ -14,12 +14,14 @@ public class ApiRoutes
         public const string User = AdminBase + "/users";
         public const string Category = AdminBase + "/categories";
         public const string Cache = AdminBase + "/cache";
+        public const string Auth = AdminBase + "/auth";
 
     }
     public static class Profile
     {
         public const string Product = ProfileBase + "/products";
         public const string Order = ProfileBase + "/orders";
+        public const string Auth = ProfileBase + "/auth";
 
     }
     public static class Website

@@ -237,20 +237,22 @@ namespace OnlineShop.Migrations
                     b.Property<DateTime>("ExpireCode")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Mobile")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedCode")
+                    b.Property<DateTime?>("UpdatedCode")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("VerifyCode")

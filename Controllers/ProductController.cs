@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Dtos.Requests;
 using OnlineShop.Dtos.Responses;
-using OnlineShop.Models;
 using OnlineShop.Services;
 using OnlineShop.Setting;
 

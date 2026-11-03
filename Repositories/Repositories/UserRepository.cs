@@ -15,7 +15,7 @@ namespace OnlineShop.Repositories.Repositories
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 var search = filter.Search.Trim();
-                query = query.Where(x => x.Name.Contains(search) || x.Mobile.Contains(search));
+                query = query.Where(x => x.Name!.Contains(search) || x.Mobile.Contains(search));
             }
             // Active
             if (filter.Active != null)
@@ -27,7 +27,7 @@ namespace OnlineShop.Repositories.Repositories
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
                 var name = filter.Name.Trim();
-                query = query.Where(x => x.Name.Contains(name));
+                query = query.Where(x => x.Name!.Contains(name));
             }
 
             // Mobile

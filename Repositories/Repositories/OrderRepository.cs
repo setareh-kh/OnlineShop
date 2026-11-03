@@ -15,7 +15,7 @@ namespace OnlineShop.Repositories.Repositories
             if (!string.IsNullOrWhiteSpace(filterDto.Search))
             {
                 var search = filterDto.Search.Trim();
-                query = query.Where(x => x.User.Name.Contains(search) ||
+                query = query.Where(x => x.User.Name!.Contains(search) ||
                     x.User.Mobile.Contains(search));
             }
 

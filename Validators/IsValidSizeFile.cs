@@ -2,17 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineShop.Validators
 {
-    public class IsValidSizeFile : ValidationAttribute
+    public class IsValidSizeFile(int maxSize,  bool isList = false) : ValidationAttribute
     {
-        private readonly int _maxSize;
-        private readonly bool _isList;
-
-        public IsValidSizeFile(int maxSize, bool isList = false)
-        {
-            _maxSize = maxSize;
-            _isList = isList;
-        }
-
         protected override ValidationResult? IsValid(
             object? value,
             ValidationContext validationContext)
@@ -20,7 +11,7 @@ namespace OnlineShop.Validators
             if (value is null)
                 return ValidationResult.Success;
 
-            if (_isList)
+            if (isList)
             {
                 if (value is not IEnumerable<IFormFile> files)
                     return new ValidationResult("Invalid file collection.");
@@ -29,9 +20,9 @@ namespace OnlineShop.Validators
 
                 foreach (var file in files)
                 {
-                    if (file.Length > _maxSize)
+                    if (file.Length > maxSize)
                         return new ValidationResult(
-                            $"Size of file {i} exceeds {_maxSize} bytes.");
+                            $"Size of file {i} exceeds {maxSize} bytes.");
 
                     i++;
                 }
@@ -42,9 +33,9 @@ namespace OnlineShop.Validators
             if (value is not IFormFile singleFile)
                 return new ValidationResult("Invalid file.");
 
-            return singleFile.Length <= _maxSize
+            return singleFile.Length <= maxSize
                 ? ValidationResult.Success
-                : new ValidationResult($"File size exceeds {_maxSize} bytes.");
+                : new ValidationResult($"File size exceeds {maxSize} bytes.");
         }
     }
 }

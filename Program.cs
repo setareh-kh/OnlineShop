@@ -1,4 +1,6 @@
+using Microsoft.Extensions.FileProviders;
 using OnlineShop.Installer;
+using OnlineShop.Setting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.InstallServicesInAssembly(builder.Configuration);
@@ -9,6 +11,9 @@ app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+//app.UseStaticFiles(new StaticFileOptions{FileProvider=new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"Assets")),RequestPath="/Assets"});
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseHttpsRedirection();
 

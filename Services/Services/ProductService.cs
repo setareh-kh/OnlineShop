@@ -12,7 +12,7 @@ namespace OnlineShop.Services.Services
     {
         public async Task<Product?> AddAsync(AddProductRequest dto)
         {
-           
+
             var category = await categoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
                 return null;
@@ -41,12 +41,12 @@ namespace OnlineShop.Services.Services
                 return false;
             productRepository.Delete(product);
             await productRepository.SaveChangesAsync();
-            await imageService.DeleteAsync("Product", product.Id);
+            await imageService.DeleteAsync("Product", id);
             return true;
         }
         public async Task<bool> UpdateAsync(int id, UpdateProductRequest updateProduct)
         {
-            
+
             var product = await productRepository.GetByIdAsync(id);
             if (product == null)
                 return false;
@@ -61,14 +61,14 @@ namespace OnlineShop.Services.Services
                 return false;
             if (updateProduct.Images == null || updateProduct.Images.Count == 0)
                 return true;
-            var images = await imageService.WhereAsync(x => x.ItemType == "Product" && x.ItemId==id);
+            var images = await imageService.WhereAsync(x => x.ItemType == "Product" && x.ItemId == id);
             var maxPriority = images.Max(x => x.Priority);
-            var priority= maxPriority+1;
+            var priority = maxPriority + 1;
             // if add==false ok remove all of images of product
             if (!updateProduct.AddImage)
             {
                 await imageService.DeleteAsync("Product", product.Id);
-                priority=0;
+                priority = 0;
             }
             //  اضافه کردن تصاویر جدید با مقدار تنظیم شده اولویت در هر دو صورت
             foreach (var image in updateProduct.Images)

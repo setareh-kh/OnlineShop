@@ -14,7 +14,6 @@ namespace OnlineShop.Dtos.Requests
         [DefaultValue(2)]
         public required int Quantity { get; set; }
         [Required]
-        //[IsValidPercent]//=
         [Range(0, 100, ErrorMessage = "nummer should be percent")]
         [DefaultValue(0)]
         public required int Discount { get; set; }
@@ -23,8 +22,8 @@ namespace OnlineShop.Dtos.Requests
         [Required]
         public required int CategoryId { get; set; }
         [Required(ErrorMessage ="please upload file")]
-        [AllowedExtnsions(new[] {".jpg",".jepg",".png",".bmp",".gif",".tga",".tiff",".jfif"},isList:true)]
-        [IsValidSizeFile(131072,isList:true)]//13107=128KB
+        [AllowedExtnsions([ ".jpg", ".jpeg",".png", ".bmp", ".gif", ".tga", ".tiff", ".jfif"],true)]
+        [IsValidSizeFile(2 * 1024 * 1024, true)]
         public List<IFormFile>? Images { get; set; }
         
     }

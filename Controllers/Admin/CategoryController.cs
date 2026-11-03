@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Dtos.Requests;
 using OnlineShop.Services;
 using OnlineShop.Setting;
+using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers.Admin;
-//[Authorize(Type = new int[] { 0 })]
+[Authorize(AllowedTypes = [0])]
 [ApiController]
 [Route(ApiRoutes.Admin.Category)]
 public class CategoryController(ICategoryService categoryService) : ControllerBase
