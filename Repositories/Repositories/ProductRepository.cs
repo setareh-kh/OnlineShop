@@ -64,8 +64,6 @@ namespace OnlineShop.Repositories.Repositories
             {
                 query = query.Where(x => x.Discount <= filterDto.MaxDiscount.Value);
             }
-
-
             // Available
             if (filterDto.Available.HasValue)
             {

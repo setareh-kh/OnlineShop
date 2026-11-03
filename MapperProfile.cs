@@ -11,14 +11,18 @@ namespace OnlineShop
         {
             //mapping requestDtos to models
             CreateMap<AddCategoryRequest, Category>().ForMember(dest => dest.Id, opt => opt.Ignore());
-
             CreateMap<UpdateCategoryRequest, Category>()
                     .ForMember(dest => dest.Id, opt => opt.Ignore())
                     .ForAllMembers(options => options.Condition((src, dest, srcMember) =>
                         srcMember != null));
+            CreateMap<AddProductRequest, Product>();
+            CreateMap<UpdateProductRequest, Product>()
+                        .ForAllMembers(options => options.Condition((src, dest, srcMember) =>
+                        srcMember != null));
 
             //
             CreateMap<Category, CategoryResponse>();
+            CreateMap<Product,ProductResponse>();
 
         }
     }

@@ -58,6 +58,16 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         await SaveChangesAsync();
 
     }
+    public async Task<bool> UpdateByIdAsync(int id, TEntity newValue)
+    {
+        var entity = await GetByIdAsync(id);
+        if (entity != null) 
+        {
+            await UpdateAsync(entity, newValue);
+            return true;
+        }
+        return false;
+    }
 
     //Delete
     public void Delete(TEntity entity)

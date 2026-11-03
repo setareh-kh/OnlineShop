@@ -19,6 +19,7 @@ public interface IBaseRepository<TEntity> where TEntity : class, ISqlEntity
     //Update 
     void Update(TEntity entity, TEntity newEntity);
     Task UpdateAsync(TEntity entity, TEntity newEntity);
+    Task<bool> UpdateByIdAsync(int id, TEntity newValue);
 
     //Delete
     void Delete(TEntity entity);

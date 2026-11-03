@@ -6,8 +6,12 @@ public interface IRedisService
     void SetValue(string key, dynamic value, TimeSpan? expiration = null);
     Task<T?> GetValueAsync<T>(string key);
     T? GetValue<T>(string key);
-    Dictionary<string, string> KeyValues(string pattern);
+    Task<bool> KeyExistsAsync(string key);
     bool KeyExists(string key);
-    void DeleteKeys(string[] keys);
+    Task<bool> DeleteKeyAsync(string key);
     bool DeleteKey(string key);
+    Task DeleteKeysAsync(string[] keys);
+    void DeleteKeys(string[] keys);
+    Task<List<string>> GetKeysByPrefixAsync(string prefix);
+    Dictionary<string, string> KeyValues(string pattern);
 }

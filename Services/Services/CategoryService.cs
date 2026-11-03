@@ -3,11 +3,11 @@ using OnlineShop.Dtos.Requests;
 using OnlineShop.Dtos.Responses;
 using OnlineShop.Models;
 using OnlineShop.Repositories;
-using OnlineShop.Repositories.Repositories;
 
 namespace OnlineShop.Services.Services;
 
-public class CategoryService(ICategoryRepository categoryRepository, IRedisService redisService, IMapper mapper) : BaseService<Category>(categoryRepository), ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, IRedisService redisService, 
+            IMapper mapper) : BaseService<Category>(categoryRepository), ICategoryService
 {
 
     public async Task<StandardResponse> GetAlldAsync()

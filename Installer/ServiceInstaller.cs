@@ -24,8 +24,9 @@ public class ServiceInstaller : IInstaller
         //install IService and Service as services
         services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IImageService, ImageService>();
        
-
     
         var redisConnectionString= configuration.GetValue<string>("RedisConnectionStrings:Redis");
         var perfixCach= configuration.GetValue<string>("RedisConnectionStrings:RedisPrefix");
