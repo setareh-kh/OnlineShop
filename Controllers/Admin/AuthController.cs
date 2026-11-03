@@ -3,9 +3,11 @@ using OnlineShop.Dtos.Requests;
 using OnlineShop.Models;
 using OnlineShop.Services;
 using OnlineShop.Setting;
+using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers.Admin;
 
+[Authorize(AllowedTypes = [0])]
 [ApiController]
 [Route(ApiRoutes.Admin.Auth)]
 public class AuthController(IAuthService authService) : ControllerBase

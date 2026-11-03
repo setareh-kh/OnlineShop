@@ -5,6 +5,7 @@ using OnlineShop.Setting;
 using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers.Admin;
+
 [Authorize(AllowedTypes = [0])]
 [ApiController]
 [Route(ApiRoutes.Admin.Category)]

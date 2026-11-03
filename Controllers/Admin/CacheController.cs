@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Services;
 using OnlineShop.Setting;
+using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers.Admin;
 
+[Authorize(AllowedTypes = [0])]
 [ApiController]
 [Route(ApiRoutes.Admin.Cache)]
 public class CacheController(IRedisService redisService) : ControllerBase
