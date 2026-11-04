@@ -44,7 +44,6 @@ public class AuthService(
             VerifyCode = GenerateCode(),
             ExpireCode = now.AddMinutes(10),
             UpdatedCode = now,
-            Active = true,
             CreateAt = now,
         };
         var userId = await userRepository.InsertAsync(newUser);
@@ -80,7 +79,7 @@ public class AuthService(
         {
             Success = true,
             Message = "Login is successful.",
-            Object = new{ UserId = user.Id}
+            Object = new { UserId = user.Id }
         };
     }
     public async Task<StandardResponse> CodeVerificatinAsync(VerifyCodeRequest codeRequest)
@@ -111,6 +110,7 @@ public class AuthService(
 
         var token = await GenerateJwtToken(user);
         user.IsVerified = true;
+        user.Active = true;
         await userRepository.UpdateByIdAsync(user.Id, user);
         return new StandardResponse
         {

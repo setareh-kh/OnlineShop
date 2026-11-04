@@ -23,7 +23,6 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(await authService.RegisterMobileAsync(mobileRequest, UserType.Admin));
 
     }
-    [Authorize(AllowedTypes = [0])]
     [HttpPost("Verify")]
     public async Task<IActionResult> VerifyAsync([FromBody] VerifyCodeRequest codeRequest)
     {

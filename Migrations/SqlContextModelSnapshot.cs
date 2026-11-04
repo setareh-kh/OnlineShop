@@ -228,7 +228,7 @@ namespace OnlineShop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Active")
+                    b.Property<bool>("Active")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("CreateAt")

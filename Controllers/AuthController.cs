@@ -19,7 +19,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         return Ok(await authService.RegisterMobileAsync(mobileRequest,Models.UserType.User));
     }
-    [Authorize(AllowedTypes = [1])]
+    
     [HttpPost("Verify")]
     public async Task<IActionResult> VerifyAsync([FromBody] VerifyCodeRequest codeRequest)
     {

@@ -19,7 +19,7 @@ namespace OnlineShop.Models
         [MaxLength(250)] public string VerifyCode { get; set; } = null!;
         public DateTime ExpireCode { get; set; }
         public DateTime? UpdatedCode { get; set; }
-        public bool? Active { get; set; }
+        public bool Active { get; set; } = false;
         public bool IsVerified { get; set; } = false;
         [Required]
         public required DateTime CreateAt { get; set; }
