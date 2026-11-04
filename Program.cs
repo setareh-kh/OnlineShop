@@ -1,4 +1,3 @@
-using Microsoft.Extensions.FileProviders;
 using OnlineShop.Installer;
 using OnlineShop.Setting;
 

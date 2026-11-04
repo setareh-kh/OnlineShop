@@ -7,7 +7,7 @@ using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers.Admin;
 
-[Authorize(AllowedTypes = [0])]
+
 [ApiController]
 [Route(ApiRoutes.Admin.Auth)]
 public class AuthController(IAuthService authService) : ControllerBase
@@ -23,6 +23,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(await authService.RegisterMobileAsync(mobileRequest, UserType.Admin));
 
     }
+    [Authorize(AllowedTypes = [0])]
     [HttpPost("Verify")]
     public async Task<IActionResult> VerifyAsync([FromBody] VerifyCodeRequest codeRequest)
     {

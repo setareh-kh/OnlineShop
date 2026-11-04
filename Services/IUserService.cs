@@ -11,5 +11,6 @@ public interface IUserService : IBaseService<User>
     Task<bool> UpdateAsync(int id, UpdateUserRequest updateUser);
     Task<bool> DeleteAsync(int id);
     Task<PaginateResponse<User>> Filter(UserFilterRequest filter);
+    Task<bool> ChangeActive(int id, bool newActive);
 
 }

@@ -22,6 +22,8 @@ public class ApiRoutes
         public const string Product = ProfileBase + "/products";
         public const string Order = ProfileBase + "/orders";
         public const string Auth = ProfileBase + "/auth";
+        public const string MyProfile = ProfileBase;
+
 
     }
     public static class Website

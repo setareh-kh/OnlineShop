@@ -9,7 +9,7 @@ namespace OnlineShop.Services.Services;
 public class UserService(IUserRepository userRepository, IRedisService redisService
             , IImageService imageService) : BaseService<User>(userRepository), IUserService
 {
-    
+
     public async Task<StandardResponse> GetAlldAsync()
     {
 
@@ -39,7 +39,8 @@ public class UserService(IUserRepository userRepository, IRedisService redisServ
         if (!string.IsNullOrWhiteSpace(updateUser.Name)) user.Name = updateUser.Name;
         if (updateUser.Image?.Length > 0)
         {
-            var img = await imageService.SaveAsync(updateUser.Image, "User", id);
+            await imageService.DeleteAsync("User", id);
+            await imageService.SaveAsync(updateUser.Image, "User", id);
         }
         await userRepository.SaveChangesAsync(); //Not use UpdateAsync of BaseRepo because It use from Setvalue EF
         await redisService.SetValueAsync($"user_{id}", user!, TimeSpan.FromMinutes(10));
@@ -50,6 +51,7 @@ public class UserService(IUserRepository userRepository, IRedisService redisServ
     {
         var user = await userRepository.GetByIdAsync(id);
         if (user == null) return false;
+        if (user.Type == UserType.Admin) return false;
         if (redisService.KeyExists($"user_{id}"))
             redisService.DeleteKey($"user_{id}");
         redisService.DeleteKey($"all_users");
@@ -71,5 +73,16 @@ public class UserService(IUserRepository userRepository, IRedisService redisServ
         };
     }
 
-    
+    public async Task<bool> ChangeActive(int id, bool newActive)
+    {
+        var user = await userRepository.GetByIdAsync(id);
+        if (user == null) return false;
+        if (user.Type == UserType.Admin) return false;
+        user.Active = newActive;
+        await SaveChanges();
+        await redisService.SetValueAsync($"user_{id}", user!, TimeSpan.FromMinutes(10));
+        redisService.DeleteKey($"all_users");
+        return true;
+    }
+
 }

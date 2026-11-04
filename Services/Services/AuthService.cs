@@ -58,7 +58,7 @@ public class AuthService(
         return new StandardResponse
         {
             Success = true,
-            Message = "create User",
+            Message = "user is created",
             Object = new
             {
                 UserId = userId,

@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Dtos.Requests;
 using OnlineShop.Services;
 using OnlineShop.Setting;
+using OnlineShop.Validators;
 
 namespace OnlineShop.Controllers;
-
 [ApiController]
 [Route(ApiRoutes.Website.Auth)]
 public class AuthController(IAuthService authService) : ControllerBase
@@ -19,6 +19,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         return Ok(await authService.RegisterMobileAsync(mobileRequest,Models.UserType.User));
     }
+    [Authorize(AllowedTypes = [1])]
     [HttpPost("Verify")]
     public async Task<IActionResult> VerifyAsync([FromBody] VerifyCodeRequest codeRequest)
     {

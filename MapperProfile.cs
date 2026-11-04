@@ -22,7 +22,9 @@ namespace OnlineShop
 
             //
             CreateMap<Category, CategoryResponse>();
-            CreateMap<Product,ProductResponse>();
+            CreateMap<Product, ProductResponse>();
+            CreateMap<User, AdminUserResponse>();
+
 
         }
     }
