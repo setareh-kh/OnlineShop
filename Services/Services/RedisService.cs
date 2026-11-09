@@ -12,8 +12,8 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
     };
 
     private readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(connectionString);
-    private string BuildKey(string key) => $"{prefix}:{key}";
-
+    private readonly string _prefix = $"{prefix.TrimEnd(':')}:";
+    private string BuildKey(string key) => $"{_prefix}{key.TrimStart(':')}";
     public async Task SetValueAsync(string key, dynamic value, TimeSpan? expiration = null)
     {
         var db = _redis.GetDatabase();
@@ -40,7 +40,7 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
         }
         catch (JsonException)
         {
-            await db.KeyDeleteAsync(key);
+            await db.KeyDeleteAsync(BuildKey(key));
             return default;
         }
     }
@@ -57,7 +57,7 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
         }
         catch (JsonException)
         {
-            db.KeyDelete(key);
+            db.KeyDelete(BuildKey(key));
             return default;
         }
     }
@@ -87,22 +87,26 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
 
     public async Task DeleteKeysAsync(string[] keys)
     {
-        if (keys.Length > 0)
-        {
-            var db = _redis.GetDatabase();
-            var redisKeys = Array.ConvertAll(keys, key => (RedisKey)key);
-            await db.KeyDeleteAsync(redisKeys);
-        }
+        if (keys.Length == 0)
+            return;
+
+        var db = _redis.GetDatabase();
+
+        var redisKeys = keys
+            .Select(key => (RedisKey)BuildKey(key))
+            .ToArray();
+
+        await db.KeyDeleteAsync(redisKeys);
     }
 
     public void DeleteKeys(string[] keys)
     {
         if (keys.Length <= 0) return;
         var db = _redis.GetDatabase();
-        var redisKeys = Array.ConvertAll(keys, key => (RedisKey)key);
+        var redisKeys = Array.ConvertAll(keys, key => (RedisKey)BuildKey(key));
         db.KeyDelete(redisKeys);
     }
-    public async Task<List<string>> GetKeysByPrefixAsync(string prefix)
+    /*public async Task<List<string>> GetKeysByPrefixV0Async(string prefix)
     {
         var db = _redis.GetDatabase();
         var keys = new List<string>();
@@ -120,9 +124,33 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
         }
 
         return keys;
+    }*/
+    public async Task<List<string>> GetKeysByPrefixAsync(string prefix = "")
+{
+    var db = _redis.GetDatabase();
+
+    var keys = new HashSet<string>();
+
+    var pattern = $"{BuildKey(prefix)}*";
+
+    foreach (var endpoint in _redis.GetEndPoints())
+    {
+        var server = _redis.GetServer(endpoint);
+
+        await foreach (var key in server.KeysAsync(
+            database: db.Database,
+            pattern: pattern))
+        {
+            var logicalKey = key.ToString()[_prefix.Length..];
+
+            keys.Add(logicalKey);
+        }
     }
 
-    public Dictionary<string, string> KeyValues(string pattern)
+    return keys.ToList();
+}
+
+    /*public Dictionary<string, string> KeyValuesV0(string pattern)
     {
         var db = _redis.GetDatabase();
         var server = _redis.GetServer(db.Multiplexer.GetEndPoints()[0]);
@@ -134,6 +162,31 @@ public class RedisService(string connectionString, string prefix) : IRedisServic
         {
             var value = db.StringGet(key);
             results.Add(key!, value!);
+        }
+
+        return results;
+    }*/
+    public Dictionary<string, string> KeyValues(string pattern)
+    {
+        var db = _redis.GetDatabase();
+
+        var server = _redis.GetServer(
+            _redis.GetEndPoints()[0]);
+
+        var results = new Dictionary<string, string>();
+
+        foreach (var key in server.Keys(
+            database: db.Database,
+            pattern: BuildKey(pattern)))
+        {
+            var value = db.StringGet(key);
+
+            if (value.HasValue)
+            {
+                var logicalKey = key.ToString()[_prefix.Length..];
+
+                results[logicalKey] = value.ToString();
+            }
         }
 
         return results;

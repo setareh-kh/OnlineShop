@@ -17,12 +17,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         return Ok(await authService.Login(mobileRequest, UserType.Admin));
     }
-    [HttpPost("Register")]
+    /*[HttpPost("Register")]
     public async Task<IActionResult> RegisterAsync([FromBody] MobileRequest mobileRequest)
     {
         return Ok(await authService.RegisterMobileAsync(mobileRequest, UserType.Admin));
-
-    }
+    }*/
     [HttpPost("Verify")]
     public async Task<IActionResult> VerifyAsync([FromBody] VerifyCodeRequest codeRequest)
     {

@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Services;
 using OnlineShop.Setting;
-using OnlineShop.Validators;
+
 
 namespace OnlineShop.Controllers.Admin;
 
-[Authorize(AllowedTypes = [0])]
+//[Authorize(AllowedTypes = [0])]
 [ApiController]
 [Route(ApiRoutes.Admin.Cache)]
 public class CacheController(IRedisService redisService) : ControllerBase
@@ -14,16 +14,28 @@ public class CacheController(IRedisService redisService) : ControllerBase
     public async Task<IActionResult> RemoveAsync(string key)
     {
         if (!await redisService.KeyExistsAsync(key)) return Ok("key isn't Exists.");
-        return await redisService.DeleteKeyAsync(key)? 
-            Ok("The remove was successful."):BadRequest("The remove wasn't successful.");
+        return await redisService.DeleteKeyAsync(key) ?
+            Ok("The remove was successful.") : BadRequest("The remove wasn't successful.");
     }
 
-    [HttpDelete("Prefix/{prefix}")]
-    public async Task<IActionResult> DeleteByPrefixAsync(string prefix)
+    [HttpDelete("Empty")]
+    public async Task<IActionResult> EmptyAsync()
     {
-        var keys = (await redisService.GetKeysByPrefixAsync(prefix)).ToArray();
+        var keys = (await redisService.GetKeysByPrefixAsync()).ToArray();
         await redisService.DeleteKeysAsync(keys);
-        return Ok("The remove was successful.");
+        return Ok("cache is already empty");
+    }
+    [HttpGet("AllKeys")]
+    public async Task<IActionResult> GetAllKeys()
+    {
+        return Ok(await redisService.GetKeysByPrefixAsync());
+
+    }
+    [HttpGet("KeyValues")]
+    public async Task<IActionResult> KeyValues(string pattern)
+    {
+        return Ok(redisService.KeyValues(pattern));
+
     }
 
 }

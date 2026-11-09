@@ -12,6 +12,6 @@ public interface IRedisService
     bool DeleteKey(string key);
     Task DeleteKeysAsync(string[] keys);
     void DeleteKeys(string[] keys);
-    Task<List<string>> GetKeysByPrefixAsync(string prefix);
+    Task<List<string>> GetKeysByPrefixAsync(string prefix = "");
     Dictionary<string, string> KeyValues(string pattern);
 }
