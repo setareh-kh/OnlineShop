@@ -3,7 +3,7 @@ using OnlineShop.Models;
 
 namespace OnlineShop.Repositories.Repositories
 {
-    public class ImageRepository (SqlContext context):BaseRepository<Image>(context), IImageRepository
+    public class ImageRepository(SqlContext context) : BaseRepository<Image>(context), IImageRepository
     {
         private async Task<string> StoreToFileAsync(string uniqStart, string lastPath, IFormFile file)
         {
@@ -31,8 +31,9 @@ namespace OnlineShop.Repositories.Repositories
                 Name = name,
                 ItemType = itemType,
                 ItemId = itemId,
-                Url = Path.Combine($"\\Assets" , $"{itemType}s",$"{name}"),
-                Priority = priority
+                Url = $"/Assets/{itemType}s/{name}",
+                Priority = priority,
+                CreateAt = DateTime.UtcNow
             };
             await SqlContext.Images.AddAsync(image);
             await SqlContext.SaveChangesAsync();
@@ -52,7 +53,7 @@ namespace OnlineShop.Repositories.Repositories
             if (!imgs.Any()) return false;
             foreach (var image in imgs)
             {
-                var dltFile = $"{Directory.GetCurrentDirectory()}\\Assets\\{itemType}s\\{image.Name}";
+                var dltFile = Path.Combine(Directory.GetCurrentDirectory(),"Assets",$"{itemType}s",image.Name);
                 //Console.WriteLine(Directory.GetCurrentDirectory());
                 //Console.WriteLine(image.Url);
                 //Console.WriteLine(dltFile);
@@ -81,5 +82,11 @@ namespace OnlineShop.Repositories.Repositories
             }
 
         }*/
+        /* public async Task<List<Image>> GetImagesByItemIdsAsync(string itemType,List<int> itemIds)
+         {
+             return await SqlContext.Images.Where(x =>x.ItemType == itemType && itemIds.Contains(x.ItemId))
+                 .OrderBy(x => x.Priority)
+                 .ToListAsync();
+         }*/
     }
 }

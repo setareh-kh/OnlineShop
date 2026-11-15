@@ -9,14 +9,16 @@ namespace OnlineShop.Repositories.Repositories
 
         public async Task<PaginateResponse<Product>> Filter(ProductFilterRequest filterDto)
         {
-            var query = SqlContext.Products.AsQueryable();
+            var query = SqlContext.Products.AsNoTracking().Include(p => p.Category).AsQueryable();
+
             // Search
             if (!string.IsNullOrWhiteSpace(filterDto.Search))
             {
                 var search = filterDto.Search.Trim();
                 query = query.Where(x => x.Name.Contains(search));
             }
-             // Active
+
+            // Active
             if (filterDto.Active.HasValue)
             {
                 query = query.Where(x => x.Active == filterDto.Active.Value);
@@ -64,26 +66,49 @@ namespace OnlineShop.Repositories.Repositories
             {
                 query = query.Where(x => x.Discount <= filterDto.MaxDiscount.Value);
             }
+
+            // MinFinalPrice
+            if (filterDto.MinFinalPrice.HasValue)
+            {
+                query = query.Where(p => p.Price * (1m - (p.Discount / 100m)) >= filterDto.MinFinalPrice.Value);
+                //query = query.Where(p =>p.Price * (100 - p.Discount) / 100m >= filterDto.MinFinalPrice.Value);
+
+            }
+            
+            // MaxFinalPrice
+            if (filterDto.MaxFinalPrice.HasValue)
+            {
+                query = query.Where(p => p.Price * (1m - (p.Discount / 100m)) <= filterDto.MaxFinalPrice.Value);
+                //query = query.Where(p =>p.Price * (100 - p.Discount) / 100m <= filterDto.MaxFinalPrice.Value);
+            }
+            
             // Available
             if (filterDto.Available.HasValue)
             {
                 query = query.Where(x => x.Available == filterDto.Available.Value);
             }
-
+           
             // Category
             if (filterDto.CategoryId.HasValue)
             {
                 query = query.Where(x => x.CategoryId == filterDto.CategoryId.Value);
             }
-
+           
             // Include Category
-            if (filterDto.Include)
+           /* if (filterDto.Include)
             {
                 query = query.Include(x => x.Category);
-            }
-
+            }*/
+           
             return await Paginate(filterDto, query);
         }
+        public async Task<List<Product>> GetAllWithCategoryAsync()
+        {
+            return await SqlContext.Products
+                .Include(p => p.Category)
+                .ToListAsync();
+        }
+
 
     }
 }

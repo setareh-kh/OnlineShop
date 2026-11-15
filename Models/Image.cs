@@ -10,7 +10,7 @@ namespace OnlineShop.Models
         public required string Name { get; set; }
         [Required]
         [MaxLength(50)]
-        public required string ItemType { get; set; }
+        public required string ItemType { get; set; }//Product , User
         [Required]
         public int ItemId { get; set; }
         [Required]

@@ -15,6 +15,8 @@ public class ProductFilterRequest : BaseFilterRequest
     public int? MinDiscount { get; set; }
 
     public int? MaxDiscount { get; set; }
+    public decimal? MinFinalPrice { get; set; }
+    public decimal? MaxFinalPrice { get; set; }
 
     public int? CategoryId { get; set; }
 

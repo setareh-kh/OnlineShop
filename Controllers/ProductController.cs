@@ -23,13 +23,13 @@ public async Task<IActionResult> GetAll()
             return Ok(cachedProducts);
     }
 
-    var products = (await productService.GetAll())!.ToList();
+    var products = await productService.GetAllWithDetailsAsync();
 
-    var response = mapper.Map<List<ProductResponse>>(products);
+    //var response = mapper.Map<List<ProductResponse>>(products);
 
-    await redisService.SetValueAsync("all_products_Website",response,TimeSpan.FromMinutes(10));
+    await redisService.SetValueAsync("all_products_Website",products,TimeSpan.FromMinutes(10));
 
-    return Ok(response);
+    return Ok(products);
 }
 
     [HttpGet("Filter")]

@@ -78,8 +78,46 @@ namespace OnlineShop.Services.Services
             }
             return true;
         }
-
         public async Task<PaginateResponse<ProductResponse>> Filter(ProductFilterRequest filterDto)
+        {
+            // دریافت محصولات همراه Category و Pagination
+            var res = await productRepository.Filter(filterDto);
+
+            var products = res.Items ?? new List<Product>();
+
+            // دریافت شناسه محصولات همین صفحه
+            var productIds = products.Select(p => p.Id).ToList();
+
+            // دریافت تصاویر محصولات همین صفحه
+            var images = await imageService.WhereAsync(x =>
+                x.ItemType == "Product" &&
+                productIds.Contains(x.ItemId));
+
+            // گروه بندی تصاویر بر اساس شناسه محصول
+            var imagesLookup = images.ToLookup(x => x.ItemId);
+
+            // تبدیل محصولات به Response
+            var result = mapper.Map<List<ProductResponse>>(products);
+
+            // اضافه کردن تصاویر به هر محصول
+            foreach (var product in result)
+            {
+                product.Images = mapper.Map<List<ImageResponse>>(
+                    imagesLookup[product.Id].OrderBy(x => x.Priority));
+            }
+
+            // بازگرداندن نتیجه همراه اطلاعات Pagination
+            return new PaginateResponse<ProductResponse>()
+            {
+                Page = res.Page,
+                Pager = res.Pager,
+                Total = res.Total,
+                Pages = res.Pages,
+                Items = result
+            };
+        }
+
+        /*public async Task<PaginateResponse<ProductResponse>> Filter(ProductFilterRequest filterDto)
         {
             var res = await productRepository.Filter(filterDto);
             return new PaginateResponse<ProductResponse>()
@@ -90,7 +128,70 @@ namespace OnlineShop.Services.Services
                 Pages = res.Pages,
                 Items = res.Items?.Select(mapper.Map<ProductResponse>).ToList()
             };
+        }*/
+        public async Task<List<ProductResponse>> GetAllWithImages()
+        {
+            // دریافت محصولات از BaseService
+            var products = await base.GetAll();
+
+            if (products == null)
+                return new List<ProductResponse>();
+
+            var productList = products.ToList();
+
+            if (productList.Count == 0)
+                return new List<ProductResponse>();
+
+            // دریافت شناسه تمام محصولات
+            var productIds = productList.Select(x => x.Id).ToList();
+
+            // دریافت تصاویر همه محصولات با یک Query
+            var images = await imageService.WhereAsync(x =>
+                x.ItemType == "Product" &&
+                productIds.Contains(x.ItemId));
+
+            // تبدیل محصولات به Response
+            var result = mapper.Map<List<ProductResponse>>(productList);
+
+            // گروه‌بندی تصاویر بر اساس ItemId
+            var imagesLookup = images.ToLookup(x => x.ItemId);
+
+            foreach (var product in result)
+            {
+                product.Images = mapper.Map<List<ImageResponse>>(
+                    imagesLookup[product.Id]
+                        .OrderBy(x => x.Priority)
+                );
+            }
+
+            return result;
         }
+        public async Task<List<ProductResponse>> GetAllWithDetailsAsync()
+        {
+            var products = await productRepository.GetAllWithCategoryAsync();
+
+            if (products.Count == 0)
+                return new List<ProductResponse>();
+
+            var productIds = products.Select(p => p.Id).ToList();
+
+            var images = await imageService.WhereAsync(x =>
+                x.ItemType == "Product" &&
+                productIds.Contains(x.ItemId));
+
+            var imagesLookup = images.ToLookup(x => x.ItemId);
+
+            var result = mapper.Map<List<ProductResponse>>(products);
+
+            foreach (var product in result)
+            {
+                product.Images = mapper.Map<List<ImageResponse>>(
+                    imagesLookup[product.Id].OrderBy(x => x.Priority));
+            }
+
+            return result;
+        }
+
 
     }
 }
