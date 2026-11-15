@@ -9,7 +9,7 @@ namespace OnlineShop.Controllers;
 [ApiController]
 [Route(ApiRoutes.Website.Product)]
 public class ProductController(IProductService productService
-            , IRedisService redisService, IMapper mapper) : ControllerBase
+            , IRedisService redisService) : ControllerBase
 {
     [HttpGet("All")]
 public async Task<IActionResult> GetAll()
