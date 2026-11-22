@@ -9,4 +9,5 @@ public interface IImageService:IBaseService<Image>
     Task<Image?> GetAsync(string itemType, int itemId);
     Task<List<Image>> GetImagesAsync(string itemType, int itemId);
     Task<bool> DeleteAsync(string itemType,int itemId);
+    Task<List<Image>> GetMainProductImagesAsync(List<int> productIds);
 }

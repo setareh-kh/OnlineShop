@@ -13,4 +13,5 @@ public interface IProductService : IBaseService<Product>
     Task<PaginateResponse<ProductResponse>> Filter(ProductFilterRequest filterDto);
     Task<List<ProductResponse>> GetAllWithImages();
     Task<List<ProductResponse>> GetAllWithDetailsAsync();
+    Task<ProductResponse?> GetWithDetailsAsync(int id);
 }

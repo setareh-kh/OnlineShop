@@ -53,7 +53,7 @@ namespace OnlineShop.Repositories.Repositories
             if (!imgs.Any()) return false;
             foreach (var image in imgs)
             {
-                var dltFile = Path.Combine(Directory.GetCurrentDirectory(),"Assets",$"{itemType}s",image.Name);
+                var dltFile = Path.Combine(Directory.GetCurrentDirectory(), "Assets", $"{itemType}s", image.Name);
                 //Console.WriteLine(Directory.GetCurrentDirectory());
                 //Console.WriteLine(image.Url);
                 //Console.WriteLine(dltFile);
@@ -62,6 +62,26 @@ namespace OnlineShop.Repositories.Repositories
             }
             await SqlContext.SaveChangesAsync();
             return true;
+        }
+        public async Task<List<Image>> GetMainProductImagesAsync(List<int> productIds)
+        {
+            return await SqlContext.Set<Image>()
+                .Where(img =>
+                    img.ItemType == "Product" &&
+                    productIds.Contains(img.ItemId) &&
+                    !SqlContext.Set<Image>().Any(other =>
+                        other.ItemType == img.ItemType &&
+                        other.ItemId == img.ItemId &&
+                        (
+                            other.Priority < img.Priority ||
+                            (
+                                other.Priority == img.Priority &&
+                                other.Id < img.Id
+                            )
+                        )
+                    )
+                )
+                .ToListAsync();
         }
         /*public async Task<bool> UpdateAsync(IFormFile file, string itemType, int itemId, int priority, bool isAdded=true)
         {

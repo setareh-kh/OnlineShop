@@ -34,4 +34,8 @@ public class ImageService(IImageRepository imageRepository) :BaseService<Image>(
     {
         return await imageRepository.DeleteAsync(itemType,itemId);
     }
+    public async Task<List<Image>> GetMainProductImagesAsync(List<int> productIds)
+    {
+        return await imageRepository.GetMainProductImagesAsync(productIds);
+    }
 }

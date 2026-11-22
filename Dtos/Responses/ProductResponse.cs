@@ -8,6 +8,7 @@ public class ProductResponse
     public required int Quantity { get; set; }
     public required int Discount { get; set; }
     public required bool Available { get; set; }
+    public required bool Active { get; set; }
     public int CategoryId { get; set; }
     public CategoryResponse? Category { get; set; }
     public List<ImageResponse> Images { get; set; } = new();

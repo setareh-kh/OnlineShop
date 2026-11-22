@@ -4,6 +4,15 @@ using OnlineShop.Setting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.InstallServicesInAssembly(builder.Configuration);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -21,9 +30,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 //app.UseStaticFiles(new StaticFileOptions{FileProvider=new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"Assets")),RequestPath="/Assets"});
 
-app.UseMiddleware<JwtMiddleware>();
-
 app.UseHttpsRedirection();
+
+app.UseCors("Frontend");
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();
 

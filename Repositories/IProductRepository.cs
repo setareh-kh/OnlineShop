@@ -8,6 +8,7 @@ namespace OnlineShop.Repositories
     {
         Task<PaginateResponse<Product>> Filter(ProductFilterRequest filterDto);
         Task<List<Product>> GetAllWithCategoryAsync();
+        Task<Product?> GetWithCategoryAsync(int id);
                
     }
 }

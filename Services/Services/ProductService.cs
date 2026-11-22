@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using OnlineShop.Dtos.Requests;
 using OnlineShop.Dtos.Responses;
 using OnlineShop.Models;
@@ -79,6 +80,38 @@ namespace OnlineShop.Services.Services
             return true;
         }
         public async Task<PaginateResponse<ProductResponse>> Filter(ProductFilterRequest filterDto)
+        {
+            // دریافت محصولات همراه Category و Pagination
+            var res = await productRepository.Filter(filterDto);
+
+            var products = res.Items ?? new List<Product>();
+
+            // دریافت شناسه محصولات همین صفحه
+            var productIds = products.Select(p => p.Id).ToList();
+            // دریافت تصویر با الویت صفر محصولات همین صفحه
+            var images = await imageService.GetMainProductImagesAsync(productIds);
+            // تبدیل محصولات به Response
+            var result = mapper.Map<List<ProductResponse>>(products);
+            // ااتصال تصاویر به محصولات
+            foreach (var product in result)
+            {
+                var image = images.FirstOrDefault(x => x.ItemId == product.Id);
+
+                if (image != null)
+                    product.Images = new List<ImageResponse> { mapper.Map<ImageResponse>(image) };
+            }
+
+            // بازگرداندن نتیجه همراه اطلاعات Pagination
+            return new PaginateResponse<ProductResponse>()
+            {
+                Page = res.Page,
+                Pager = res.Pager,
+                Total = res.Total,
+                Pages = res.Pages,
+                Items = result
+            };
+        }
+        public async Task<PaginateResponse<ProductResponse>> Filter2(ProductFilterRequest filterDto)
         {
             // دریافت محصولات همراه Category و Pagination
             var res = await productRepository.Filter(filterDto);
@@ -172,22 +205,39 @@ namespace OnlineShop.Services.Services
 
             if (products.Count == 0)
                 return new List<ProductResponse>();
-
             var productIds = products.Select(p => p.Id).ToList();
-
-            var images = await imageService.WhereAsync(x =>
-                x.ItemType == "Product" &&
-                productIds.Contains(x.ItemId));
-
-            var imagesLookup = images.ToLookup(x => x.ItemId);
-
+            var images = await imageService.GetMainProductImagesAsync(productIds);
             var result = mapper.Map<List<ProductResponse>>(products);
 
             foreach (var product in result)
             {
-                product.Images = mapper.Map<List<ImageResponse>>(
-                    imagesLookup[product.Id].OrderBy(x => x.Priority));
+                var image = images.FirstOrDefault(x => x.ItemId == product.Id);
+
+                if (image != null)
+                    product.Images = new List<ImageResponse> { mapper.Map<ImageResponse>(image) };
             }
+
+            return result;
+        }
+        public async Task<ProductResponse?> GetWithDetailsAsync(int id)
+        {
+            // دریافت محصول به همراه دسته‌بندی
+            var product = await productRepository.GetWithCategoryAsync(id);
+
+            if (product == null)
+                return null;
+
+            // دریافت تصاویر محصول
+            var images = await imageService.WhereAsync(x =>
+                x.ItemType == "Product" &&
+                x.ItemId == id);
+
+            // تبدیل Product به ProductResponse
+            var result = mapper.Map<ProductResponse>(product);
+
+            // تبدیل تصاویر و مرتب‌سازی بر اساس Priority
+            result.Images = mapper.Map<List<ImageResponse>>(
+                images.OrderBy(x => x.Priority));
 
             return result;
         }

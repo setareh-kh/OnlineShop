@@ -74,32 +74,32 @@ namespace OnlineShop.Repositories.Repositories
                 //query = query.Where(p =>p.Price * (100 - p.Discount) / 100m >= filterDto.MinFinalPrice.Value);
 
             }
-            
+
             // MaxFinalPrice
             if (filterDto.MaxFinalPrice.HasValue)
             {
                 query = query.Where(p => p.Price * (1m - (p.Discount / 100m)) <= filterDto.MaxFinalPrice.Value);
                 //query = query.Where(p =>p.Price * (100 - p.Discount) / 100m <= filterDto.MaxFinalPrice.Value);
             }
-            
+
             // Available
             if (filterDto.Available.HasValue)
             {
                 query = query.Where(x => x.Available == filterDto.Available.Value);
             }
-           
+
             // Category
             if (filterDto.CategoryId.HasValue)
             {
                 query = query.Where(x => x.CategoryId == filterDto.CategoryId.Value);
             }
-           
+
             // Include Category
-           /* if (filterDto.Include)
-            {
-                query = query.Include(x => x.Category);
-            }*/
-           
+            /* if (filterDto.Include)
+             {
+                 query = query.Include(x => x.Category);
+             }*/
+
             return await Paginate(filterDto, query);
         }
         public async Task<List<Product>> GetAllWithCategoryAsync()
@@ -107,6 +107,12 @@ namespace OnlineShop.Repositories.Repositories
             return await SqlContext.Products
                 .Include(p => p.Category)
                 .ToListAsync();
+        }
+        public async Task<Product?> GetWithCategoryAsync(int id)
+        {
+            return await SqlContext.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
 
