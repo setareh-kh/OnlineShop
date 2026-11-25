@@ -32,7 +32,7 @@ public class ApiRoutes
         public const string Category = Base + "/categories";
         public const string User = Base + "/users";
         public const string Auth = Base + "/auth";
-        public const string Cart = Base + "/carts";
+        public const string Cart = Base + "/cart";
 
 
     }

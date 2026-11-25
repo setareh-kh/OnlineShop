@@ -42,15 +42,60 @@ public class CartController(ICartService cartService) : ControllerBase
             Message = "Product added to cart successfully."
         });
     }
-    [HttpGet]
+    [HttpGet("Showitems")]
     public async Task<IActionResult> GetCart()
     {
         var user = HttpContext.Items["user"] as User;
 
         if (user == null) return Unauthorized();
 
-        return Ok( await cartService.GetCartAsync(user.Id));
+        return Ok(await cartService.GetCartAsync(user.Id));
+    }
+    [HttpPut("items/{id:int}")]
+    public async Task<IActionResult> UpdateItem(int id,[FromBody] UpdateCartItemRequest request)
+    {
+        var user = HttpContext.Items["user"] as User;
+
+        if (user == null)
+            return Unauthorized();
+
+        var result = await cartService.UpdateItemAsync(user.Id, id, request);
+
+        if (!result)
+            return BadRequest(new
+            {
+                Success = false,
+                Message = "Unable to update cart item."
+            });
+
+        return Ok(new
+        {
+            Success = true,
+            Message = "Cart item updated successfully."
+        });
     }
 
-    
+    [HttpDelete("items/{id:int}")]
+    public async Task<IActionResult> RemoveItem(int id)
+    {
+        var user = HttpContext.Items["user"] as User;
+
+        if (user == null)
+            return Unauthorized();
+
+        var result = await cartService.RemoveItemAsync(user.Id, id);
+
+        if (!result)
+            return BadRequest(new
+            {
+                Success = false,
+                Message = "Unable to remove cart item."
+            });
+
+        return Ok(new
+        {
+            Success = true,
+            Message = "Cart item removed successfully."
+        });
+    }
 }

@@ -120,7 +120,7 @@ public class AuthService(
             {
                 Id = user.Id,
                 Mobile = user.Mobile,
-                //Token = token
+                Token = token
             }
         };
     }

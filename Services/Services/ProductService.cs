@@ -191,10 +191,7 @@ namespace OnlineShop.Services.Services
 
             foreach (var product in result)
             {
-                product.Images = mapper.Map<List<ImageResponse>>(
-                    imagesLookup[product.Id]
-                        .OrderBy(x => x.Priority)
-                );
+                product.Images = mapper.Map<List<ImageResponse>>(imagesLookup[product.Id].OrderBy(x => x.Priority));
             }
 
             return result;
