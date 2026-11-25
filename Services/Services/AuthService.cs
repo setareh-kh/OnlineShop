@@ -64,22 +64,22 @@ public class AuthService(
                 Mobile = newUser.Mobile,
                 VerifyCode = newUser.VerifyCode
             }
-
         };
-
     }
     public async Task<StandardResponse> Login(MobileRequest mobileRequest, UserType userType = UserType.User)
     {
         var user = await userRepository.FindAsync(x => x.Mobile == mobileRequest.Mobile);
         if (user == null)
             return await RegisterMobileAsync(mobileRequest, userType);
-        if (!user!.IsVerified)
-            return await CodeVerificatinAsync(new VerifyCodeRequest { UserId = user.Id, VerifyCode = "" });
+        user.VerifyCode = GenerateCode();
+        user.ExpireCode = DateTime.UtcNow.AddMinutes(10);
+        user.UpdatedCode = DateTime.UtcNow;
+        await userRepository.SaveChangesAsync();
         return new StandardResponse
         {
             Success = true,
-            Message = "Login is successful.",
-            Object = new { UserId = user.Id }
+            Message = "Login is successful and Generate New Code",
+            Object = new { UserId = user.Id, VerifyCode=user.VerifyCode }
         };
     }
     public async Task<StandardResponse> CodeVerificatinAsync(VerifyCodeRequest codeRequest)
@@ -120,7 +120,7 @@ public class AuthService(
             {
                 Id = user.Id,
                 Mobile = user.Mobile,
-                Token = token
+                //Token = token
             }
         };
     }

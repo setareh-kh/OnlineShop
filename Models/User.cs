@@ -24,6 +24,7 @@ namespace OnlineShop.Models
         [Required]
         public required DateTime CreateAt { get; set; }
         public ICollection<Token> Tokens { get; set; } = new List<Token>();
+        public Cart? Cart { get; set; }
 
     }
 }

@@ -14,7 +14,7 @@ public class ProductController(IProductService productService
     [HttpGet("All")]
     public async Task<IActionResult> GetAll()
     {
-        if (redisService.KeyExists("all_products_Website"))
+        if (await redisService.KeyExistsAsync("all_products_Website"))
         {
             var cachedProducts =
                 await redisService.GetValueAsync<List<ProductResponse>>("all_products_Website");
@@ -39,7 +39,7 @@ public class ProductController(IProductService productService
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (redisService.KeyExists($"product_{id}"))
+        if (await redisService.KeyExistsAsync($"product_{id}"))
         {
             var cachedProduct = await redisService.GetValueAsync<ProductResponse>($"product_{id}");
             if (cachedProduct is not null) return Ok(cachedProduct);

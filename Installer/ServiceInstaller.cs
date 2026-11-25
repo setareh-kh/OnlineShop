@@ -19,6 +19,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
 
 
         //install IService and Service as services
@@ -28,6 +29,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ICartService, CartService>();
 
         //For JWT
         var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();

@@ -14,4 +14,5 @@ public interface IProductService : IBaseService<Product>
     Task<List<ProductResponse>> GetAllWithImages();
     Task<List<ProductResponse>> GetAllWithDetailsAsync();
     Task<ProductResponse?> GetWithDetailsAsync(int id);
+    
 }
