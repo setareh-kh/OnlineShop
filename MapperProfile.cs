@@ -25,8 +25,7 @@ namespace OnlineShop
             CreateMap<Product, ProductResponse>();
             CreateMap<User, AdminUserResponse>();
             CreateMap<Image, ImageResponse>();
-            CreateMap<User, UserFilterResponse>();
-            CreateMap<Order, OrderResponse>();
+           
             
            
         }

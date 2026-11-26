@@ -34,6 +34,8 @@ public class ServiceInstaller : IInstaller
         services.AddSingleton(appSettings!);
         services.AddHttpContextAccessor();
 
+        services.Configure<CheckoutSettings>(configuration.GetSection("CheckoutSettings"));
+
 
         //For RedisCache
         var redisConnectionString = configuration.GetValue<string>("RedisConnectionStrings:Redis");
