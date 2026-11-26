@@ -19,6 +19,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<ITokenRepository, TokenRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ICheckoutRepository, CheckoutRepository>();
+        services.AddScoped<IOrderExpirationRepository, OrderExpirationRepository>();
 
 
         //install IService and Service as services
@@ -30,6 +31,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IOrderExpirationService, OrderExpirationService>();
         
 
         //For JWT

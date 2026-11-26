@@ -1,4 +1,5 @@
 namespace OnlineShop.Installer;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 
@@ -34,5 +35,16 @@ public class OtherInstaller : IInstaller
                 });
         });
         services.AddAutoMapper(cfg => { }, typeof(Program));
+        //ربوط به CORS هستند؛ یعنی قانونی که مشخص می‌کند چه وب‌سایت‌هایی اجازه دارند از مرورگر کاربر به API پروژه OnlineShop درخواست بفرستند.
+        //تعریف قانون CORS
+        services.AddCors(options =>
+        {
+            options.AddPolicy("Frontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
     }
 }
