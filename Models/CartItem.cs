@@ -22,7 +22,7 @@ public class CartItem : ISqlEntity
     [Required]
     public required int Quantity { get; set; }
 
-    public DateTime CreateAt { get; set; } = DateTime.Now;
+    public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? UpdateDate { get; set; }
 }

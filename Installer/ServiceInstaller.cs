@@ -16,8 +16,6 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IImageRepository, ImageRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
 
