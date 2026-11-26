@@ -100,4 +100,6 @@ public class Order : ISqlEntity
 
     // پرداخت‌های سفارش
     public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    [Required, MaxLength(100)]
+    public required string IdempotencyKey { get; set; }
 }

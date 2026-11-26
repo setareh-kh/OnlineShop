@@ -166,6 +166,11 @@ namespace OnlineShop.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<DateTime?>("InventoryReleasedAt")
                         .HasColumnType("datetime(6)");
 
@@ -257,6 +262,9 @@ namespace OnlineShop.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("UserId", "CreateAt");
+
+                    b.HasIndex("UserId", "IdempotencyKey")
+                        .IsUnique();
 
                     b.ToTable("orders", (string)null);
                 });

@@ -151,6 +151,8 @@ namespace OnlineShop.Models
                 e.HasIndex(x => x.Status);
 
                 e.HasIndex(x => x.PaymentStatus);
+
+                e.HasIndex(x => new { x.UserId, x.IdempotencyKey }).IsUnique(); //هر کاربر نمی‌تواند یک کلید تکراری برای ثبت سفارش داشته باشد
             });
 
             // =========================

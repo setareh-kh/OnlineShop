@@ -18,6 +18,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IImageRepository, ImageRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ICheckoutRepository, CheckoutRepository>();
 
 
         //install IService and Service as services
@@ -28,6 +29,8 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICartService, CartService>();
+        services.AddScoped<ICheckoutService, CheckoutService>();
+        
 
         //For JWT
         var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
