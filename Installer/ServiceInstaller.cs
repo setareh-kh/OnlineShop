@@ -20,6 +20,7 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ICheckoutRepository, CheckoutRepository>();
         services.AddScoped<IOrderExpirationRepository, OrderExpirationRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 
         //install IService and Service as services
@@ -32,7 +33,10 @@ public class ServiceInstaller : IInstaller
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<ICheckoutService, CheckoutService>();
         services.AddScoped<IOrderExpirationService, OrderExpirationService>();
-        
+        services.AddScoped<IPaymentGateway, ZarinpalPaymentGateway>();
+        services.AddScoped<IPaymentService, PaymentService>();
+
+
 
         //For JWT
         var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
@@ -40,6 +44,11 @@ public class ServiceInstaller : IInstaller
         services.AddHttpContextAccessor();
 
         services.Configure<CheckoutSettings>(configuration.GetSection("CheckoutSettings"));
+
+        services.Configure<ZarinpalSettings>(configuration.GetSection("ZarinpalSettings"));
+        services.AddHttpClient();
+
+        
 
 
         //For RedisCache

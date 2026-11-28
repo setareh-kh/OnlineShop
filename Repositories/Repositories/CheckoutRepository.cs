@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Dtos.Objects;
 using OnlineShop.Dtos.Requests;
@@ -9,8 +8,6 @@ namespace OnlineShop.Repositories.Repositories;
 
 public class CheckoutRepository(SqlContext context) : ICheckoutRepository
 {
-    private readonly SqlContext _context = context;
-
     public async Task<CheckoutCreateResult> CreateOrderAsync(int userId,
         CheckoutRequest request,
         string idempotencyKey,
@@ -38,7 +35,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
         if (shippingCost < 0 || reservationMinutes <= 0)
             return Fail("تنظیمات Checkout نامعتبر است.");
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
             // 3. بررسی مجدد درخواست تکراری
@@ -56,7 +53,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
             }
 
             // 4. دریافت سبد خرید و محصولات
-            var cart = await _context.Carts
+            var cart = await context.Carts
                 .Include(x => x.Items)
                 .ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
@@ -89,7 +86,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
                 .Distinct()
                 .ToList();
 
-            var images = await _context.Images
+            var images = await context.Images
                 .Where(x =>
                     x.ItemType == "Product" &&
                     productIds.Contains(x.ItemId))
@@ -158,7 +155,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
             // 8. رزرو اتمیک موجودی
             foreach (var item in cart.Items)
             {
-                var affectedRows = await _context.Products
+                var affectedRows = await context.Products
                     .Where(p =>
                         p.Id == item.ProductId &&
                         p.Active &&
@@ -186,7 +183,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
                 IdempotencyKey = idempotencyKey,
                 UserId = userId,
 
-                Status = isOnline? OrderStatus.PendingPayment : OrderStatus.Confirmed,
+                Status = isOnline ? OrderStatus.PendingPayment : OrderStatus.Confirmed,
 
                 PaymentStatus = PaymentStatus.Pending,
                 PaymentMethod = request.PaymentMethod,
@@ -207,7 +204,7 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
 
                 InventoryReservedAt = now,
 
-                InventoryReservedUntil = isOnline? now.AddMinutes(reservationMinutes) : null,
+                InventoryReservedUntil = isOnline ? now.AddMinutes(reservationMinutes) : null,
 
                 CreateAt = now,
                 Items = orderItems
@@ -225,15 +222,15 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
 
             order.Payments.Add(payment);
 
-            _context.Orders.Add(order);
+            context.Orders.Add(order);
 
             // 11. پاک کردن سبد خرید
-            _context.CartItems.RemoveRange(cart.Items);
+            context.CartItems.RemoveRange(cart.Items);
 
             cart.UpdateDate = now;
 
             // 12. ذخیره همه تغییرات و Commit
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
@@ -268,9 +265,9 @@ public class CheckoutRepository(SqlContext context) : ICheckoutRepository
         }
     }
 
-    private async Task<Order?> FindExistingOrderAsync( int userId,string idempotencyKey)
+    private async Task<Order?> FindExistingOrderAsync(int userId, string idempotencyKey)
     {
-        return await _context.Orders.AsNoTracking().FirstOrDefaultAsync(x =>x.UserId == userId &&
+        return await context.Orders.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId &&
                 x.IdempotencyKey == idempotencyKey);
     }
 
